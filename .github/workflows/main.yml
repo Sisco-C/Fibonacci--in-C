@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main  # Replace 'main' with the branch name you want to trigger the workflow on
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can change the runner environment if needed
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Add your build and test steps here
+    # For example:
+    # - name: Install dependencies
+    #   run: npm install
+    # - name: Run tests
+    #   run: npm test
