@@ -1,0 +1,29 @@
+name: Move Issue from To do to In progress
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  move_issue:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install jq
+      run: sudo apt-get install -y jq
+
+    - name: Move issue and assign to project
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        # Get issue number from the event payload
+        ISSUE_NUMBER=$(jq --raw-output '.issue.number' $GITHUB_EVENT_PATH)
+
+        # Move the issue from "To do" to "In progress"
+        curl -X POST -H "Authorization: token $PAT_TOKEN" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/projects/columns/f75ad846/moves" -d "{\"position\":\"top\",\"issue_id\":$ISSUE_NUMBER}"
+
+        # Assign the issue to a project (modify the PROJECT_ID)
+        curl -X POST -H "Authorization: token $PAT_TOKEN" -H "Accept: application/vnd.github.inertia-preview+json" "https://api.github.com/projects/4/issues/$ISSUE_NUMBER"
